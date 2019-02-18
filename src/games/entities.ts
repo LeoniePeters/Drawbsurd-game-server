@@ -5,6 +5,8 @@ export type Turn = 'drawing' | 'guessing'
 export type Row = [ Symbol | null, Symbol | null, Symbol | null ]
 export type Board = [ Row, Row, Row ]
 
+export type Canvas = any
+
 type Status = 'pending' | 'started' | 'finished'
 
 const emptyRow: Row = [null, null, null]
@@ -20,10 +22,10 @@ export class Game extends BaseEntity {
   board: Board
 
   // added to use
-  /* @Column('text')
-  canvas: String
+  @Column('text', {default: 'Empty canvas'})
+  canvas: Canvas
 
-  @Column('text')
+   /*@Column('text')
   phrase: String
 
   @Column('text')
