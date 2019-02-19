@@ -6,6 +6,7 @@ export type Row = [ Symbol | null, Symbol | null, Symbol | null ]
 export type Board = [ Row, Row, Row ]
 
 export type Canvas = any
+export type Answer = any
 
 type Status = 'pending' | 'started' | 'finished'
 
@@ -25,18 +26,11 @@ export class Game extends BaseEntity {
   @Column('text', {default: 'Empty canvas'})
   canvas: Canvas
 
-   /*@Column('text')
-  phrase: String
-
-  @Column('text')
-  answer: String */
+  @Column('text', {default: 'Waiting'})
+  answer: Answer
 
   @Column('text', {default: 'drawing'})
   turn: Turn
-
-  //don't need
- /*  @Column('char', {length:1, nullable: true})
-  winner: Symbol */
 
   @Column('text', {default: 'pending'})
   status: Status
