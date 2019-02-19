@@ -26,7 +26,7 @@ export class Game extends BaseEntity {
   @Column('text', {default: 'Empty canvas'})
   canvas: Canvas
 
-  @Column('text', {default: 'Waiting'})
+  @Column('text', {default: 'wait for it'})
   answer: Answer
 
   @Column('text', {default: 'drawing'})

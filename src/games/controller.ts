@@ -80,11 +80,11 @@ export default class GameController {
     if (!player) throw new ForbiddenError(`You are not part of this game`)
     if (game.status !== 'started') throw new BadRequestError(`The game is not started yet`)
     //if (player.turn !== game.turn) throw new BadRequestError(`It's not your turn`)
-    console.log(update, 'update')
+  
     if (update.data.length < 40) {
       game.answer = update.data
     } else {
-      game.canvas = update
+      game.canvas = update.data
     }
 
     await game.save()
