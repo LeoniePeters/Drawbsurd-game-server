@@ -30,7 +30,7 @@ export default class GameController {
     await Player.create({
       game: entity, 
       user,
-      symbol: 'x'
+      turn: 'drawing'
     }).save()
 
     const game = await Game.findOneById(entity.id)
@@ -60,7 +60,7 @@ export default class GameController {
     const player = await Player.create({
       game, 
       user,
-      symbol: 'o'
+      turn: 'guessing'
     }).save()
 
     io.emit('action', {
@@ -88,8 +88,8 @@ export default class GameController {
 
     if (!player) throw new ForbiddenError(`You are not part of this game`)
     if (game.status !== 'started') throw new BadRequestError(`The game is not started yet`)
-    if (player.symbol !== game.turn) throw new BadRequestError(`It's not your turn`)
-    if (!isValidTransition(player.symbol, game.board, update.board)) {
+    if (player.turn !== game.turn) throw new BadRequestError(`It's not your turn`)
+    /* if (!isValidTransition(player.turn, game.board, update.board)) {
       throw new BadRequestError(`Invalid move`)
     }    
 
@@ -105,6 +105,38 @@ export default class GameController {
       game.turn = player.symbol === 'x' ? 'o' : 'x'
     }
     game.board = update.board
+    await game.save() */
+    
+    io.emit('action', {
+      type: 'UPDATE_GAME',
+      payload: game
+    })
+
+    return game
+  }
+
+  @Authorized()
+  // the reason that we're using patch here is because this request is not idempotent
+  // http://restcookbook.com/HTTP%20Methods/idempotency/
+  // try to fire the same requests twice, see what happens
+  @Patch('/games/:id([0-9]+)')
+  async updateCanvas(
+    @CurrentUser() user: User,
+    @Param('id') gameId: number,
+    @Body() update: any
+  ) {
+    const game = await Game.findOneById(gameId)
+    if (!game) throw new NotFoundError(`Game does not exist`)
+
+    const player = await Player.findOne({ user, game })
+
+    if (!player) throw new ForbiddenError(`You are not part of this game`)
+    if (game.status !== 'started') throw new BadRequestError(`The game is not started yet`)
+    if (player.turn !== game.turn) throw new BadRequestError(`It's not your turn`)
+    
+    console.log(update + 'HERE IS LOGGING')
+
+    game.canvas = update
     await game.save()
     
     io.emit('action', {

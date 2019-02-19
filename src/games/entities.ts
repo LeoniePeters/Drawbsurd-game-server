@@ -1,9 +1,11 @@
 import { BaseEntity, PrimaryGeneratedColumn, Column, Entity, Index, OneToMany, ManyToOne } from 'typeorm'
 import User from '../users/entity'
 
-export type Symbol = 'x' | 'o'
+export type Turn = 'drawing' | 'guessing'
 export type Row = [ Symbol | null, Symbol | null, Symbol | null ]
 export type Board = [ Row, Row, Row ]
+
+export type Canvas = any
 
 type Status = 'pending' | 'started' | 'finished'
 
@@ -19,11 +21,22 @@ export class Game extends BaseEntity {
   @Column('json', {default: emptyBoard})
   board: Board
 
-  @Column('char', {length:1, default: 'x'})
-  turn: Symbol
+  // added to use
+  @Column('text', {default: 'Empty canvas'})
+  canvas: Canvas
 
-  @Column('char', {length:1, nullable: true})
-  winner: Symbol
+   /*@Column('text')
+  phrase: String
+
+  @Column('text')
+  answer: String */
+
+  @Column('text', {default: 'drawing'})
+  turn: Turn
+
+  //don't need
+ /*  @Column('char', {length:1, nullable: true})
+  winner: Symbol */
 
   @Column('text', {default: 'pending'})
   status: Status
@@ -35,7 +48,7 @@ export class Game extends BaseEntity {
 }
 
 @Entity()
-@Index(['game', 'user', 'symbol'], {unique:true})
+@Index(['game', 'user', 'turn'], {unique:true})
 export class Player extends BaseEntity {
 
   @PrimaryGeneratedColumn()
@@ -47,8 +60,8 @@ export class Player extends BaseEntity {
   @ManyToOne(_ => Game, game => game.players)
   game: Game
 
-  @Column('char', {length: 1})
-  symbol: Symbol
+  @Column('text')
+  turn: Turn
 
   @Column('integer', { name: 'user_id' })
   userId: number
