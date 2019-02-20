@@ -59,6 +59,7 @@ export class Player extends BaseEntity {
 
  /*  @Column('integer', { name: 'user_id' })
   userId: number */
+
 }
 
 @Entity()
