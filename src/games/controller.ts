@@ -1,10 +1,10 @@
-import { 
-  JsonController, Authorized, CurrentUser, Post, Param, BadRequestError, HttpCode, NotFoundError, ForbiddenError, Get, 
-  Body, Patch 
+import {
+  JsonController, Authorized, CurrentUser, Post, Param, BadRequestError, HttpCode, NotFoundError, ForbiddenError, Get,
+  Body, Patch
 } from 'routing-controllers'
 import User from '../users/entity'
-import { Game, Player } from './entities'
-import {io} from '../index'
+import { Game, Player, Phrase } from './entities'
+import { io } from '../index'
 
 
 @JsonController()
@@ -19,7 +19,7 @@ export default class GameController {
     const entity = await Game.create().save()
 
     await Player.create({
-      game: entity, 
+      game: entity,
       user,
       turn: 'drawing'
     }).save()
@@ -49,7 +49,7 @@ export default class GameController {
     await game.save()
 
     const player = await Player.create({
-      game, 
+      game,
       user,
       turn: 'guessing'
     }).save()
@@ -67,7 +67,7 @@ export default class GameController {
   // http://restcookbook.com/HTTP%20Methods/idempotency/
   // try to fire the same requests twice, see what happens
   @Patch('/games/:id([0-9]+)')
-  async updateCanvas(
+  async updateGameData(
     @CurrentUser() user: User,
     @Param('id') gameId: number,
     @Body() update: any
@@ -79,12 +79,16 @@ export default class GameController {
 
     if (!player) throw new ForbiddenError(`You are not part of this game`)
     if (game.status !== 'started') throw new BadRequestError(`The game is not started yet`)
-    if (player.turn !== game.turn) throw new BadRequestError(`It's not your turn`)
+    //if (player.turn !== game.turn) throw new BadRequestError(`It's not your turn`)
 
+    if (update.data.length < 40) {
+      game.answer = update.data
+    } else {
+      game.canvas = update.data
+    }
 
-    game.canvas = update
     await game.save()
-    
+
     io.emit('action', {
       type: 'UPDATE_GAME',
       payload: game
@@ -106,5 +110,19 @@ export default class GameController {
   getGames() {
     return Game.find()
   }
+
+  @Authorized()
+  @Get('/phrases/random')
+  async getRandomPhrase() {
+
+    return await getConnection()
+      .createQueryBuilder()
+      .select("id")
+      .from(Phrase, "phrase")
+      .orderBy("RANDOM()")
+      .limit(1)
+      .getOne()
+  }
+
 }
 
