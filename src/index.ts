@@ -14,11 +14,6 @@ import {secret} from './jwt'
 
 
 const app = new Koa()
-/* const cors = require('@koa/cors')
-app.use(cors({
-  keepHeadersOnError: true,
-  allowMethods: "GET, PATCH, HEAD, PUT, POST, OPTIONS, DELETE"
-})) */
 const server = new Server(app.callback())
 export const io = IO(server)
 const port = process.env.PORT || 4000
