@@ -57,8 +57,8 @@ export class Player extends BaseEntity {
   @Column('text')
   turn: Turn
 
-  @Column('integer', { name: 'user_id' })
-  userId: number
+ /*  @Column('integer', { name: 'user_id' })
+  userId: number */
 }
 
 @Entity()
