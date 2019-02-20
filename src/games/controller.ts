@@ -3,8 +3,14 @@ import {
   Body, Patch
 } from 'routing-controllers'
 import User from '../users/entity'
-import { Game, Player, Phrase } from './entities'
+import { Game, Player } from './entities'
 import { io } from '../index'
+
+const phrases = ['duck robs a bank', 'to be on top of the world', 'cat smokes a cigar', 'to have a snake in pocket',
+  'monkey having a BBQ', 'wild programmer', 'git hell', 'space battle', 'coffee at Codaisseur', 'homework on Saturday',
+  'DRY - do not repeat yourself', 'rubber ducking', 'test yourself before you wreck yourself', 'an elephant riding a bike',
+  'papaya on holidays', 'programmer and designer', 'full-stack app', 'breakfast on steroids', 'eating a marmelade',
+  'healthy lunch', 'Henk eats an apple-pie'];
 
 
 @JsonController()
@@ -16,7 +22,9 @@ export default class GameController {
   async createGame(
     @CurrentUser() user: User
   ) {
-    const entity = await Game.create().save()
+    const entity = await Game.create({
+      phrase: phrases[Math.floor(Math.random() * phrases.length)]
+    }).save()
 
     await Player.create({
       game: entity,
@@ -109,19 +117,6 @@ export default class GameController {
   @Get('/games')
   getGames() {
     return Game.find()
-  }
-
-  @Authorized()
-  @Get('/phrases/random')
-  async getRandomPhrase() {
-
-    return await getConnection()
-      .createQueryBuilder()
-      .select("id")
-      .from(Phrase, "phrase")
-      .orderBy("RANDOM()")
-      .limit(1)
-      .getOne()
   }
 
 }
