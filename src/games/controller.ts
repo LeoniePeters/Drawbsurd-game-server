@@ -81,7 +81,7 @@ export default class GameController {
     if (game.status !== 'started') throw new BadRequestError(`The game is not started yet`)
     //if (player.turn !== game.turn) throw new BadRequestError(`It's not your turn`)
 
-    if (update.data.length < 40) {
+    if (!update.data.includes('lines' && 'width')) {
       game.answer = update.data
     } else {
       game.canvas = update.data
