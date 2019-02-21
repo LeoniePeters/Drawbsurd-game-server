@@ -106,6 +106,31 @@ export default class GameController {
   }
 
   @Authorized()
+  @Post('/games/:id([0-9]+)')
+  @HttpCode(201)
+  async changeStatus(
+    @CurrentUser() user: User,
+    @Param('id') gameId: number
+  ) {
+    const game = await Game.findOneById(gameId)
+    if (!game) throw new BadRequestError(`Game does not exist`)
+    const player = await Player.findOne({ user, game })
+
+    if (!player) throw new ForbiddenError(`You are not part of this game`)
+    if (game.status !== 'started') throw new BadRequestError(`The game is not started yet`)
+
+    game.status = 'finished'
+    await game.save()
+
+    io.emit('action', {
+      type: 'UPDATE_GAME',
+      payload: game
+    })
+
+    return game
+  }
+
+  @Authorized()
   @Get('/games/:id([0-9]+)')
   getGame(
     @Param('id') id: number
