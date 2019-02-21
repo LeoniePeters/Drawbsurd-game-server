@@ -8,7 +8,7 @@
   "private": true,
   "scripts": {
     "start": "node .",
-    "postinstall": "tsc -p .",
+    "postinstall": "node_modules/.bin/tsc -p .",
     "dev": "nodemon .",
     "test": "node_modules/.bin/mocha --require ts-node/register src/**/*.spec.ts",
     "watch": "node_modules/.bin/tsc -w",
