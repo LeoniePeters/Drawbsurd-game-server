@@ -26,7 +26,10 @@ export class Game extends BaseEntity {
   @Column('text', { default: 'drawing' })
   turn: Turn
 
-  @Column('text', { default: 'pending' })
+  @Column('text', { default: 'Nobody' })
+  winner: String
+
+  @Column('text', { default: 'started' })
   status: Status
 
   // this is a relation, read more about them here:
