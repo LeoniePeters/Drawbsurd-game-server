@@ -51,7 +51,7 @@ export default class GameController {
   ) {
     const game = await Game.findOneById(gameId)
     if (!game) throw new BadRequestError(`Game does not exist`)
-    if (game.status !== 'pending') throw new BadRequestError(`Game is already started`)
+    // if (game.status !== 'pending') throw new BadRequestError(`Game is already started`)
 
     game.status = 'started'
     await game.save()
@@ -110,7 +110,8 @@ export default class GameController {
   @HttpCode(201)
   async changeStatus(
     @CurrentUser() user: User,
-    @Param('id') gameId: number
+    @Param('id') gameId: number,
+    @Body() update: any
   ) {
     const game = await Game.findOneById(gameId)
     if (!game) throw new BadRequestError(`Game does not exist`)
@@ -120,6 +121,7 @@ export default class GameController {
     if (game.status !== 'started') throw new BadRequestError(`The game is not started yet`)
 
     game.status = 'finished'
+    game.winner = update.winner
     await game.save()
 
     io.emit('action', {
