@@ -12,7 +12,7 @@ Open your mind, be silly!
 ### Check out the front-end repo [here](https://github.com/LeoniePeters/Drawbsurd-game-client)
 
 ## How it looks:  
-![game view](Drawbsurd-game-view.gif)
+![game view](https://github.com/LeoniePeters/Drawbsurd-game-client/blob/master/Drawbsurd-game-view.gif)
 
 ## Jump to:  
 **[Used Technologies](#used-technologies)  
